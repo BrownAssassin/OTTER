@@ -229,7 +229,7 @@ int main() {
 
 		vao->Bind();
 		glDrawArrays(GL_TRIANGLES, 0, 3);
-		vao->Bind();
+		vao->UnBind();
 
 		shader2->Bind();
 
