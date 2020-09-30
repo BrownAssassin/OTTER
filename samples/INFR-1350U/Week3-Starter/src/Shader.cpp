@@ -8,6 +8,7 @@ Shader::Shader() :
 	_fs(0),
 	_handle(0)
 {
+<<<<<<< HEAD
 	_handle = glCreateProgram();
 }
 
@@ -16,10 +17,18 @@ Shader::~Shader() {
 		glDeleteProgram(_handle);
 		_handle = 0;
 	}
+=======
+	// TODO: Constructor
+}
+
+Shader::~Shader() {
+	// TODO: Destructor
+>>>>>>> master
 }
 
 bool Shader::LoadShaderPart(const char* source, GLenum type)
 {
+<<<<<<< HEAD
 	// Creates a new shader part (VS, FS, GS, etc...)
 	GLuint handle = glCreateShader(type);
 
@@ -66,6 +75,9 @@ bool Shader::LoadShaderPart(const char* source, GLenum type)
 	}
 	
 	return status != GL_FALSE;
+=======
+	// TODO: Implement
+>>>>>>> master
 }
 
 bool Shader::LoadShaderPartFromFile(const char* path, GLenum type) {
@@ -79,6 +91,7 @@ bool Shader::LoadShaderPartFromFile(const char* path, GLenum type) {
 
 bool Shader::Link()
 {
+<<<<<<< HEAD
 	LOG_ASSERT(_vs != 0 && _fs != 0, "Must attach both a vertex and fragment shader!");
 	
 	// Attach our two shaders
@@ -114,6 +127,9 @@ bool Shader::Link()
 	}
 	
 	return status != GL_FALSE;
+=======
+	// Todo: Implement
+>>>>>>> master
 }
 
 void Shader::Bind() {

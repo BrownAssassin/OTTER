@@ -53,10 +53,13 @@ void GlDebugMessage(GLenum source, GLenum type, GLuint id, GLenum severity, GLsi
 
 GLFWwindow* window;
 
+<<<<<<< HEAD
 void GlfwWindowResizedCallback(GLFWwindow* window, int width, int height) {
 	glViewport(0, 0, width, height);
 }
 
+=======
+>>>>>>> master
 bool initGLFW() {
 	if (glfwInit() == GLFW_FALSE) {
 		LOG_ERROR("Failed to initialize GLFW");
@@ -64,12 +67,18 @@ bool initGLFW() {
 	}
 
 	//Create a new GLFW window
+<<<<<<< HEAD
 	window = glfwCreateWindow(800, 800, "Mrinank Sivakumar - 100748771", nullptr, nullptr);
 	glfwMakeContextCurrent(window);
 
 	// Set our window resized callback
 	glfwSetWindowSizeCallback(window, GlfwWindowResizedCallback);
 
+=======
+	window = glfwCreateWindow(800, 800, "INFR1350U", nullptr, nullptr);
+	glfwMakeContextCurrent(window);
+
+>>>>>>> master
 	return true;
 }
 
@@ -156,6 +165,7 @@ int main() {
 	};
 
 	//VBO - Vertex buffer object
+<<<<<<< HEAD
 	VertexBuffer* posVbo = new VertexBuffer();
 	posVbo->LoadData(points, 9);
 	VertexBuffer* color_vbo = new VertexBuffer();
@@ -205,6 +215,33 @@ int main() {
 	shader2->LoadShaderPartFromFile("shaders/vertex_shader.glsl", GL_VERTEX_SHADER);
 	shader2->LoadShaderPartFromFile("shaders/frag_shader2.glsl", GL_FRAGMENT_SHADER);
 	shader2->Link();
+=======
+	GLuint pos_vbo = 0;
+	glGenBuffers(1, &pos_vbo);
+	glBindBuffer(GL_ARRAY_BUFFER, pos_vbo);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(points), points, GL_STATIC_DRAW);
+
+	GLuint color_vbo = 1;
+	glGenBuffers(1, &color_vbo);
+	glBindBuffer(GL_ARRAY_BUFFER, color_vbo);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(colors), colors, GL_STATIC_DRAW);
+
+	glBindBuffer(GL_ARRAY_BUFFER, pos_vbo);
+
+	//						index, size, type, normalize?, stride, pointer
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, NULL);
+
+	glBindBuffer(GL_ARRAY_BUFFER, color_vbo);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, NULL);
+
+	glEnableVertexAttribArray(0);//pos
+	glEnableVertexAttribArray(1);//colors
+
+	// Load our shaders
+
+	if (!loadShaders())
+		return 1;
+>>>>>>> master
 
 	// GL states
 	glEnable(GL_DEPTH_TEST);
@@ -225,6 +262,7 @@ int main() {
 		glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+<<<<<<< HEAD
 		shader->Bind();
 
 		vao->Bind();
@@ -236,11 +274,17 @@ int main() {
 		vao2->Bind();
 		glDrawElements(GL_TRIANGLES, interleaved_ibo->GetElementCount(), interleaved_ibo->GetElementType(), nullptr);
 		vao2->UnBind();
+=======
+		glUseProgram(shader_program);
+
+		glDrawArrays(GL_TRIANGLES, 0, 3);
+>>>>>>> master
 
 		glfwSwapBuffers(window);
 	}
 
 	// Clean up the toolkit logger so we don't leak memory
+<<<<<<< HEAD
 	delete shader;
 	delete vao;
 	delete vao2;
@@ -249,6 +293,8 @@ int main() {
 	delete posVbo;
 	delete color_vbo;
 
+=======
+>>>>>>> master
 	Logger::Uninitialize();
 	return 0;
 }

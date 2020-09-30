@@ -5,6 +5,7 @@ IBuffer::IBuffer(GLenum type, GLenum usage) :
 	_elementSize(0),
 	_handle(0)
 {
+<<<<<<< HEAD
 	_type = type;
 	_usage = usage;
 	glCreateBuffers(1, &_handle);
@@ -22,6 +23,17 @@ void IBuffer::LoadData(const void* data, size_t elementSize, size_t elementCount
 	glNamedBufferData(_handle, elementSize * elementCount, data, _usage);
 	_elementCount = elementCount;
 	_elementSize = elementSize;
+=======
+	// TODO: implement
+}
+
+IBuffer::~IBuffer() {
+	// TODO: implement
+}
+
+void IBuffer::LoadData(const void* data, size_t elementSize, size_t elementCount) {
+	// TODO: implement
+>>>>>>> master
 }
 
 void IBuffer::Bind() {
