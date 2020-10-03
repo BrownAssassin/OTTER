@@ -202,7 +202,8 @@ int main() {
 		float dt = static_cast<float>(thisFrame - lastFrame);
 		transform = glm::rotate(glm::mat4(1.0f), static_cast<float>(thisFrame), glm::vec3(0, 0, 1));
 		transform2 = glm::translate(glm::mat4(1.0f), glm::vec3(0, 0.0f, glm::sin(static_cast<float>(thisFrame))));
-		transform3 = glm::translate(glm::mat4(1.0f), glm::vec3(0, glm::sin(static_cast<float>(thisFrame)), 0.0f));
+		transform3 = glm::translate(glm::mat4(1.0f), glm::vec3(0, glm::sin(static_cast<float>(thisFrame)), 0.0f)) * 
+					 glm::rotate(glm::mat4(1.0f), static_cast<float>(thisFrame), glm::vec3(0, 0, 1));
 
 		glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
