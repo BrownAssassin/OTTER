@@ -54,6 +54,13 @@ int main()
 
 	//TODO: Set up our particle system.
 	ParticleParam particleData;
+	particleData.lifetime = 1.5f;
+	particleData.startColor = glm::vec4(1.0f, 1.0f, 0.0f, 1.0f);
+	particleData.endColor = glm::vec4(1.0f, 0.0f, 0.0f, 0.0f);
+	particleData.startSize = 0.1f;
+	particleData.maxParticles = 200;
+	particleData.emissionRate = 50.0f;
+	particleData.tanTheta = glm::tan(glm::radians(30.0f));
 
 	Entity particleEntity = Entity::Create();
 	particleEntity.transform.m_pos = glm::vec3(0.0f, 0.0f, 0.0f);

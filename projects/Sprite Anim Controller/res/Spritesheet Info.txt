@@ -1,0 +1,8 @@
+Animated Pixel Adventurer has 17 animations spanning 72 frames in total.
+Frame size is 50x37.
+
+Idle:		Frames 0-3
+Crouch:		Frames 4-7
+Run:		Frames 8-13
+Flip:		Frames 14-23
+Attack:		Frames 41-47

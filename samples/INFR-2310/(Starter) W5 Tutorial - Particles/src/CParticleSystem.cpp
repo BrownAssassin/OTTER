@@ -124,6 +124,15 @@ namespace nou
 	void CParticleSystem::Update(float deltaTime)
 	{
 		//TODO: Emit particles!
+		m_data->emissionTimer += deltaTime;
+
+		float emissionTime = 1.0f / m_data->param.emissionRate;
+
+		while (m_data->emissionTimer > emissionTime)
+		{
+			m_data->emissionTimer -= emissionTime;
+			Emit();
+		}
 
 		auto& camera = CCamera::current->Get<CCamera>();
 		auto& transform = m_owner->transform;
@@ -140,6 +149,34 @@ namespace nou
 			//TODO: What should we update first?
 			//TODO: How do we check if the particle should still be alive?
 			//TODO: Update our particle if it's still alive!
+
+			if (!m_data->alive[i])
+				continue;
+
+			m_data->lifetime[i] -= deltaTime;
+
+			if (m_data->lifetime[i] <= 0.0f)
+			{
+				m_data->alive[i] = false;
+					--(m_data->numAlive);
+
+			if (i == m_data->lastAlive && i != 0)
+				    --m_data->lastAlive;
+
+			m_data->insertIndices.push_front(i);
+			continue;
+			}
+
+			// 
+			float lifetimeT = 1.0f - (m_data->lifetime[i] / m_data->param.lifetime);
+			m_data->color[i] = glm::mix(m_data->param.startColor,
+				m_data->param.endColor,
+				lifetimeT);
+
+			// Updating the Particle if it is alive
+			m_data->pos[i] += deltaTime * m_data->velocity[i];
+
+			m_data->viewPos[i] = modelview * glm::vec4(m_data->pos[i], 1.0f);
 		}
 
 		Sort();
@@ -170,6 +207,16 @@ namespace nou
 			m_data->insertIndices.pop_front();
 
 			//TODO: Initialize our particle values.
+			ParticleUtility::VerticalConeEmit(
+				m_data->param.tanTheta,
+				m_data->param.startSpeed,
+				m_data->pos[i],
+				m_data->velocity[i]
+			);
+
+			m_data->color[i] = m_data->param.startColor;
+			m_data->size[i] = m_data->param.startSize;
+			m_data->lifetime[i] = m_data->param.lifetime;
 
 			m_data->alive[i] = true;
 
