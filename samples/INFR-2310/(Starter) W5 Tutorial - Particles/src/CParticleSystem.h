@@ -175,5 +175,10 @@ namespace nou
 
 		void Emit();
 		void Sort();
+
+		public:
+			auto& GetData() {
+				return m_data;
+			}
 	};
 }

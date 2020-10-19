@@ -32,9 +32,17 @@ void main() {
 	// Specular
 	vec3 camPos = vec3(0.0, 0.0, 3.0); // Pass this as a uniform from your C++ code
 	float specularStrength = 1.0;
+	// Phong Lighting //
+	/*
 	vec3 camDir = normalize(camPos - inPos);
 	vec3 reflectDir = reflect(-lightDir, N);
 	float spec = pow(max(dot(camDir, reflectDir), 0.0), 128); // Shininess coefficient (can be a uniform)
+	*/
+	// Blinn Phong Lighting //
+	vec3 camDir = normalize(camPos - inPos);
+	vec3 halfwayVec = normalize(lightDir + camDir);
+	float spec = pow(max(dot(N, halfwayVec), 0.0), 128);
+
 	vec3 specular = specularStrength * spec * lightColor; // Can also use a specular color
 
 	vec3 result = (ambient + diffuse + specular);
