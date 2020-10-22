@@ -1,7 +1,13 @@
 #pragma once
 
 #include "MeshBuilder.h"
-#include "MeshFactory.h"
+#include "VertexArrayObject.h"
+#include "VertexTypes.h"
+
+#define GLM_ENABLE_EXPERIMENTAL
+#include <GLM/glm.hpp>
+#include <GLM/gtx/euler_angles.hpp>
+#include <GLM/gtc/matrix_transform.hpp>
 
 #include <string>
 #include <sstream>
