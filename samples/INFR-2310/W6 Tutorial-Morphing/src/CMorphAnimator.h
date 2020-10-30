@@ -30,6 +30,7 @@ namespace nou
 		void Update(float deltaTime);
 
 		void SetFrames(const Mesh& frame0, const Mesh& frame1);
+		void SetFrames(const std::vector<std::unique_ptr<Mesh>> &frameList);
 		void SetFrameTime(float frameTime);
 
 		protected:
@@ -44,8 +45,10 @@ namespace nou
 			//animation clips for the exercise.
 			const Mesh* frame0;
 			const Mesh* frame1;
+			std::vector<const Mesh*> frames;
 			//The time inbetween frames.
 			float frameTime;
+			int index;
 
 			AnimData();
 			~AnimData() = default;

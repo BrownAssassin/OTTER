@@ -20,6 +20,7 @@ namespace nou
 		frame0 = nullptr;
 		frame1 = nullptr;
 		frameTime = 1.0f;
+		index = 0;
 	}
 
 	CMorphAnimator::CMorphAnimator(Entity& owner)
@@ -32,17 +33,23 @@ namespace nou
 
 	void CMorphAnimator::Update(float deltaTime)
 	{
-		if(!m_data->frame0 || !m_data->frame1)
+		//if(!m_data->frame0 || !m_data->frame1)
+		if (m_data->frames.empty())
 			return;
 
 		float t;
+		int i;
 
 		if (m_data->frameTime > 0.0f)
 		{
 			m_timer += deltaTime;
 
-			if (m_timer > m_data->frameTime)
-				m_forwards = !m_forwards;
+			if (m_timer > m_data->frameTime) {
+				m_data->index++;
+
+				if (m_data->index >= m_data->frames.size())
+					m_data->index = 0;
+			}
 
 			//This gives us the floating-point remainder
 			//of dividing m_timer by m_data->frameTime.
@@ -54,10 +61,11 @@ namespace nou
 		else
 			t = 0.0f;
 
-		if(m_forwards)
-			m_owner->Get<CMorphMeshRenderer>().UpdateData(*m_data->frame0, *m_data->frame1, t);
-		else
-			m_owner->Get<CMorphMeshRenderer>().UpdateData(*m_data->frame1, *m_data->frame0, t);
+		size_t indOne, indTwo;
+		indTwo = m_data->index;
+		indOne = (indTwo == 0) ? m_data->frames.size() - 1 : indTwo - 1;
+
+		m_owner->Get<CMorphMeshRenderer>().UpdateData(*m_data->frames[indOne], *m_data->frames[indTwo], t);
 	}
 
 	//TODO (for the exercise): You'll need to modify this function to deal with an 
@@ -66,6 +74,14 @@ namespace nou
 	{
 		m_data->frame0 = &frame0;
 		m_data->frame1 = &frame1;
+	}
+
+	void CMorphAnimator::SetFrames(const std::vector<std::unique_ptr<Mesh>> &frameList)
+	{
+		for (int i = 0; i < frameList.size(); i++)
+		{
+			m_data->frames.push_back(frameList[i].get());
+		}
 	}
 
 	void CMorphAnimator::SetFrameTime(float frameTime)
