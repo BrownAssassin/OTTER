@@ -174,6 +174,22 @@ void RenderImGui() {
 	}
 }
 
+//bool isColliding(GameObject circ, GameObject rect)
+//{
+//	float xDist = abs(circ.Position.x - rect.Position.x);
+//	float yDist = abs(circ.Position.y - rect.Position.y);
+//
+//	if (!(xDist > (rect.Width / 2 + circ.Radius)))
+//		return true;
+//	else
+//		return false;
+//
+//	if (!(yDist > (rect.Height / 2 + circ.Radius)))
+//		return true;
+//	else
+//		return false;
+//}
+
 int main() {
 	Logger::Init(); // We'll borrow the logger from the toolkit, but we need to initialize it
 
@@ -190,71 +206,11 @@ int main() {
 	glEnable(GL_DEBUG_OUTPUT);
 	glDebugMessageCallback(GlDebugMessage, nullptr);
 
-	static const float points[] = {
-		-0.5f, -0.5f, 0.1f,
-		 0.5f, -0.5f, 0.1f,
-		-0.5f,  0.5f, 0.1f
-	};
-
-	static const float colors[] = {
-		1.0f, 0.0f, 0.0f,
-		0.0f, 1.0f, 0.0f,
-		0.0f, 0.0f, 1.0f
-	};
-
-	//VBO - Vertex buffer object
-	VertexBuffer::sptr posVbo = VertexBuffer::Create();
-	posVbo->LoadData(points, 9);
-
-	VertexBuffer::sptr color_vbo = VertexBuffer::Create();
-	color_vbo->LoadData(colors, 9);
-
-	VertexArrayObject::sptr vao = VertexArrayObject::Create();
-	vao->AddVertexBuffer(posVbo, {
-		BufferAttribute(0, 3, GL_FLOAT, false, 0, NULL)
-	});
-	vao->AddVertexBuffer(color_vbo, {
-		BufferAttribute(1, 3, GL_FLOAT, false, 0, NULL)
-	});
-
-	static const VertexPosCol interleaved[] = {
-    //     X      Y     Z       R     G    B
-		{{ 0.5f, -0.5f, 0.0f},   {0.0f, 0.0f, 0.0f, 1.0f}},
-		{{ 0.5f,  0.5f, 0.0f},  {0.3f, 0.2f, 0.5f, 1.0f}},
-	    {{-0.5f,  0.5f, 0.0f},  {1.0f, 1.0f, 0.0f, 1.0f}},
-		{{ 0.5f,  1.0f, 0.0f},  {1.0f, 1.0f, 1.0f, 1.0f}}
-	};
-
-	VertexBuffer::sptr interleaved_vbo = VertexBuffer::Create();
-	interleaved_vbo->LoadData(interleaved, 4);
-	
-	static const uint16_t indices[] = {
-		0, 1, 2,
-		1, 3, 2
-	};
-	IndexBuffer::sptr interleaved_ibo = IndexBuffer::Create();
-	interleaved_ibo->LoadData(indices, 3 * 2);
-
-	size_t stride = sizeof(VertexPosCol);
-	VertexArrayObject::sptr vao2 = VertexArrayObject::Create();
-	vao2->AddVertexBuffer(interleaved_vbo, VertexPosCol::V_DECL);
-	vao2->SetIndexBuffer(interleaved_ibo);
-
-	////////////// NEW STUFF
-	
-	// We'll use the provided mesh builder to build a new mesh with a few elements
-	MeshBuilder<VertexPosNormTexCol> builder = MeshBuilder<VertexPosNormTexCol>();
-	MeshFactory::AddPlane(builder, glm::vec3(0.0f), glm::vec3(0.0f, 0.0f, 1.0f), glm::vec3(1.0f, 0.0, 0.0f), glm::vec2(100.0f, 100.0f), glm::vec4(1.0f));
-	MeshFactory::AddCube(builder, glm::vec3(-2.0f, 0.0f, 0.5f), glm::vec3(1.0f, 2.0f, 1.0f), glm::vec3(0.0f, 0.0f, 45.0f), glm::vec4(1.0f, 0.5f, 0.5f, 1.0f));
-	MeshFactory::AddIcoSphere(builder, glm::vec3(0.0f, 0.f, 1.0f), 0.5f, 2, glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
-	MeshFactory::AddUvSphere(builder, glm::vec3(1.0f, 0.f, 1.0f), 0.5f, 2, glm::vec4(0.0f, 0.0f, 1.0f, 1.0f));
-	VertexArrayObject::sptr vao3 = builder.Bake();
-
 	// We'll be implementing a loader that works a bit like an OBJ loader to learn how to read files, we'll
 	// load an exact copy of the mesh created above
-	VertexArrayObject::sptr vao4 = NotObjLoader::LoadFromFile("Sample.notobj");
+	VertexArrayObject::sptr vao = NotObjLoader::LoadFromFile("Plane.notobj");
 
-	VertexArrayObject::sptr vao5 = ObjLoader::LoadObj("monkey.obj");
+	VertexArrayObject::sptr vao2 = ObjLoader::LoadObj("Ball.notobj");
 	
 	// Load our shaders
 		Shader::sptr shader = Shader::Create();
@@ -319,16 +275,10 @@ int main() {
 
 	glm::mat4 transform = glm::mat4(1.0f);
 	glm::mat4 transform2 = glm::mat4(1.0f);
-	glm::mat4 transform3 = glm::mat4(1.0f);
-	glm::mat4 transform4 = glm::mat4(1.0f);
-	glm::mat4 transform5 = glm::mat4(1.0f);
-
-	transform4 = glm::translate(transform4, glm::vec3(0.0f, -2.5f, 0.0f));
-	transform5 = glm::translate(transform5,	glm::vec3(0.0f, 2.5f, 0.0f));
 
 	camera = Camera::Create();
-	camera->SetPosition(glm::vec3(-5, 0, 0)); // Set initial position (default perspective)
-	camera->SetUp(glm::vec3(0, 0, 1)); // Use a z-up coordinate system
+	camera->SetPosition(glm::vec3(0, 0, 15)); // Set initial position (default perspective)
+	camera->SetUp(glm::vec3(0, 1, 0)); // Use a z-up coordinate system
 	camera->LookAt(glm::vec3(0.0f)); // Look at center of the screen
 	camera->SetFovDegrees(90.0f); // Set an initial FOV
 	
@@ -364,16 +314,16 @@ int main() {
 		tKeyWatcher.Poll(window);
 
 		if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
-			transform4 = glm::translate(transform4, glm::vec3( 1.0f * dt, 0.0f, 0.0f));
+			transform = glm::translate(transform, glm::vec3( 1.0f * dt, 0.0f, 0.0f));
 		}
 		if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
-			transform4 = glm::translate(transform4, glm::vec3(-1.0f * dt, 0.0f, 0.0f));
+			transform = glm::translate(transform, glm::vec3(-1.0f * dt, 0.0f, 0.0f));
 		}
 		if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
-			transform4 = glm::translate(transform4, glm::vec3(0.0f, -1.0f * dt, 0.0f));
+			transform = glm::translate(transform, glm::vec3(0.0f, -1.0f * dt, 0.0f));
 		}
 		if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
-			transform4 = glm::translate(transform4, glm::vec3(0.0f,  1.0f * dt, 0.0f));
+			transform = glm::translate(transform, glm::vec3(0.0f,  1.0f * dt, 0.0f));
 		}
 		if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) {
 			if (!keyPressed) {
@@ -391,11 +341,6 @@ int main() {
 		else {
 			keyPressed = false;
 		}
-				
-		transform2 = transform * glm::translate(glm::mat4(1.0f), glm::vec3(0, 0.0f, glm::sin(static_cast<float>(thisFrame))));
-
-		transform4 = glm::rotate(transform4, glm::radians(rotSp), glm::vec3(0, 0, 1));
-		transform5 = glm::rotate(transform5, glm::radians(rotSp), glm::vec3(0, 1, 0));
 
 		glClearColor(0.08f, 0.17f, 0.31f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -409,27 +354,12 @@ int main() {
 		shader->SetUniformMatrix("u_ModelViewProjection", camera->GetViewProjection() * transform);
 		shader->SetUniformMatrix("u_Model", transform);
 		shader->SetUniformMatrix("u_ModelRotation", glm::mat3(transform));
-		//vao->Render();
+		vao->Render();
 
 		shader->SetUniformMatrix("u_ModelViewProjection", camera->GetViewProjection()* transform2);
 		shader->SetUniformMatrix("u_Model", transform2);
 		shader->SetUniformMatrix("u_ModelRotation", glm::mat3(transform2));
-		//vao2->Render();
-
-		shader->SetUniformMatrix("u_ModelViewProjection", camera->GetViewProjection() * transform3);
-		shader->SetUniformMatrix("u_Model", transform3);
-		shader->SetUniformMatrix("u_ModelRotation", glm::mat3(transform3));
-		//vao4->Render();
-
-		shader->SetUniformMatrix("u_ModelViewProjection", camera->GetViewProjection()* transform4);
-		shader->SetUniformMatrix("u_Model", transform4);
-		shader->SetUniformMatrix("u_ModelRotation", glm::mat3(transform4));
-		vao5->Render();
-
-		shader->SetUniformMatrix("u_ModelViewProjection", camera->GetViewProjection()* transform5);
-		shader->SetUniformMatrix("u_Model", transform5);
-		shader->SetUniformMatrix("u_ModelRotation", glm::mat3(transform5));
-		vao5->Render();
+		vao2->Render();
 
 		RenderImGui();
 

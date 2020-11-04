@@ -55,10 +55,16 @@ namespace nou
 		//TODO: Implement this function!
 		//(You will be REPLACING what is here,
 		//not just adding to it.)
+		m_timer += deltaTime;
 
 		for (size_t i = 0; i < m_anim.data.size(); ++i)
 		{
 			JointPose& pose = m_result[m_anim.data[i].jointInd];
+
+			auto currentKeyframe = m_rotFrame[i];
+			auto nextKeyframe = currentKeyframe + 1;
+
+			float t = (m_timer - m_anim.data[i].rotTimes[currentKeyframe]) / (m_anim.data[i].rotTimes[nextKeyframe] - m_anim.data[i].rotTimes[currentKeyframe]);
 
 			//Placeholder: Set our position to the first position keyframe.
 			//(If we have position keyframes).
@@ -69,9 +75,51 @@ namespace nou
 
 			//Placeholder: Set our rotation to the first rotation keyframe.
 			//(If we have rotation keyframes).
-			if (m_anim.data[i].rotFrames > 0)
+			if (m_anim.data[i].rotFrames == 0)
+			{
+				// Do nothing
+			}
+			else if (m_anim.data[i].rotFrames == 1)
 			{
 				pose.rotation = m_anim.data[i].rotKeys[0];
+			}
+			else
+			{
+				while (m_timer > m_anim.data[i].rotTimes[nextKeyframe])
+				{
+					++nextKeyframe;
+
+					if (nextKeyframe <= m_anim.data[i].rotFrames)
+					{
+						nextKeyframe = 0;
+					}
+
+					++currentKeyframe;
+
+					++m_rotFrame[i];
+					
+					if (m_rotFrame[i] >= m_anim.data[i].rotFrames)
+					{
+						m_rotFrame[i] = 0;
+					}
+
+					if (nextKeyframe == 0)
+					{
+						break;
+					}
+				}
+
+				pose.rotation = glm::mix(m_anim.data[i].rotKeys[currentKeyframe], m_anim.data[i].rotKeys[nextKeyframe], t);
+			}
+
+			if (m_timer > m_anim.duration)
+			{
+				m_timer = 0;
+
+				for (int j = 0; j < m_anim.data.size(); j++)
+				{
+					m_rotFrame[i] = 0;
+				}
 			}
 		}
 	}
