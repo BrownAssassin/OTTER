@@ -96,7 +96,7 @@ bool initGLFW() {
 #endif
 	
 	//Create a new GLFW window
-	window = glfwCreateWindow(800, 800, "INFR1350U", nullptr, nullptr);
+	window = glfwCreateWindow(800, 800, "INFR1350U - Mrinank Sivakumar - 100748771", nullptr, nullptr);
 	glfwMakeContextCurrent(window);
 
 	// Set our window resized callback
@@ -332,11 +332,12 @@ int main() {
 		// Load some textures from files
 		Texture2D::sptr diffuse = Texture2D::LoadFromFile("images/Stone_001_Diffuse.png");
 		Texture2D::sptr diffuse2 = Texture2D::LoadFromFile("images/box.bmp");
-		Texture2D::sptr specular = Texture2D::LoadFromFile("images/Stone_001_Specular.png"); 
+		Texture2D::sptr specular = Texture2D::LoadFromFile("images/Stone_001_Specular.png");
+		Texture2D::sptr reflectivity = Texture2D::LoadFromFile("images/box-reflections.bmp");
 
 		// Load the cube map
-		TextureCubeMap::sptr environmentMap = TextureCubeMap::LoadFromImages("images/cubemaps/skybox/sample.jpg");
-		//TextureCubeMap::sptr environmentMap = TextureCubeMap::LoadFromImages("images/cubemaps/skybox/ocean.jpg"); 
+		//TextureCubeMap::sptr environmentMap = TextureCubeMap::LoadFromImages("images/cubemaps/skybox/sample.jpg");
+		TextureCubeMap::sptr environmentMap = TextureCubeMap::LoadFromImages("images/cubemaps/skybox/ocean.jpg"); 
 
 		// Creating an empty texture
 		Texture2DDescription desc = Texture2DDescription();
@@ -363,13 +364,16 @@ int main() {
 
 		// We can create a group ahead of time to make iterating on the group faster
 		auto renderGroup = scene->Registry().group<RendererComponent, Transform>();
-
+		 
 		// Create a material and set some properties for it
 		ShaderMaterial::sptr material0 = ShaderMaterial::Create();  
 		material0->Shader = shader;
 		material0->Set("s_Diffuse", diffuse);
 		material0->Set("s_Diffuse2", diffuse2);
 		material0->Set("s_Specular", specular);
+		material0->Set("s_Reflectivity", reflectivity);
+		material0->Set("s_Environment", environmentMap);
+		material0->Set("u_EnvironmentRotation", glm::mat3(glm::rotate(glm::mat4(1.0f), glm::radians(90.0f), glm::vec3(1, 0, 0))));
 		material0->Set("u_Shininess", 8.0f);
 		material0->Set("u_TextureMix", 0.5f); 
 
@@ -382,7 +386,7 @@ int main() {
 		ShaderMaterial::sptr reflectiveMat = ShaderMaterial::Create();
 		reflectiveMat->Shader = reflectiveShader;
 		reflectiveMat->Set("s_Environment", environmentMap);
-		// TODO: send the rotation to apply to the skybox
+		reflectiveMat->Set("u_EnvironmentRotation", glm::mat3(glm::rotate(glm::mat4(1.0f), glm::radians(90.0f), glm::vec3(1, 0, 0))));
 
 		GameObject sceneObj = scene->CreateEntity("scene_geo");
 		{
@@ -468,7 +472,7 @@ int main() {
 			ShaderMaterial::sptr skyboxMat = ShaderMaterial::Create();
 			skyboxMat->Shader = skybox;  
 			skyboxMat->Set("s_Environment", environmentMap);
-			// TODO: send the rotation to apply to the skybox
+			skyboxMat->Set("u_EnvironmentRotation", glm::mat3(glm::rotate(glm::mat4(1.0f), glm::radians(90.0f), glm::vec3(1, 0, 0))));
 			skyboxMat->RenderLayer = 100;
 
 			MeshBuilder<VertexPosNormTexCol> mesh;

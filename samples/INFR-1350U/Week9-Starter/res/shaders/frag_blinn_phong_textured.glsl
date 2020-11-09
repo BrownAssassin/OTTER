@@ -8,6 +8,8 @@ layout(location = 3) in vec2 inUV;
 uniform sampler2D s_Diffuse;
 uniform sampler2D s_Diffuse2;
 uniform sampler2D s_Specular;
+uniform sampler2D s_Reflectivity;
+uniform samplerCube s_Environment;
 
 uniform vec3  u_AmbientCol;
 uniform float u_AmbientStrength;
@@ -24,6 +26,8 @@ uniform float u_LightAttenuationLinear;
 uniform float u_LightAttenuationQuadratic;
 
 uniform float u_TextureMix;
+
+uniform mat3 u_EnvironmentRotation;
 
 uniform vec3  u_CamPos;
 
@@ -52,10 +56,18 @@ void main() {
 	vec3 viewDir  = normalize(u_CamPos - inPos);
 	vec3 h        = normalize(lightDir + viewDir);
 
+	// Reflectivity
+	vec3 toEye = normalize(inPos - u_CamPos);
+	vec3 reflected = reflect(toEye, N);
+
 	// Get the specular power from the specular map
 	float texSpec = texture(s_Specular, inUV).x;
 	float spec = pow(max(dot(N, h), 0.0), u_Shininess); // Shininess coefficient (can be a uniform)
 	vec3 specular = u_SpecularLightStrength * texSpec * spec * u_LightCol; // Can also use a specular color
+
+	// Get the reflectivity from the reflection map
+	float texReflec = texture(s_Reflectivity, inUV).x;
+	vec3 environment = texture(s_Environment, u_EnvironmentRotation * reflected).rgb * texReflec;
 
 	// Get the albedo from the diffuse / albedo map
 	vec4 textureColor1 = texture(s_Diffuse, inUV);
@@ -65,7 +77,7 @@ void main() {
 	vec3 result = (
 		(u_AmbientCol * u_AmbientStrength) + // global ambient light
 		(ambient + diffuse + specular) * attenuation // light factors from our single light
-		) * inColor * textureColor.rgb; // Object color
+		) * inColor * textureColor.rgb + environment; // Object color
 
 	frag_color = vec4(result, textureColor.a);
 }
