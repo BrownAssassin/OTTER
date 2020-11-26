@@ -88,6 +88,9 @@ int main()
 	//To spin our boi every frame. 
 	float anglePerSecond = 30.0f;
 
+	std::string animState;
+	std::string loopState;
+
 	App::Tick();
 
 	while (!App::IsClosing() && !Input::GetKey(GLFW_KEY_ESCAPE))
@@ -134,8 +137,31 @@ int main()
 
 		App::StartImgui();
 
-		//Put any ImGUI code you need in here.
-		//(Don't forget to call Imgui::Begin and Imgui::End!)
+		ImGui::Begin("Anim Controller", new bool(true), ImVec2(450, 200));
+
+		if (boiEntity.Get<CAnimator>().GetClip()->getPlaying())
+			animState = "Pause";
+		else
+			animState = "Play";
+		if (boiEntity.Get<CAnimator>().GetClip()->getLooping())
+			loopState = "Looping";
+		else
+			loopState = "Play Once";
+
+		if (ImGui::Button(animState.c_str()))
+			boiEntity.Get<CAnimator>().GetClip()->togglePlaying();
+
+		ImGui::Text("Loop State:");
+		ImGui::SameLine();
+		if (ImGui::Button(loopState.c_str()))
+			boiEntity.Get<CAnimator>().GetClip()->toggleLooping();
+
+		if (ImGui::Button("Restart"))
+			boiEntity.Get<CAnimator>().GetClip()->resetAnim();
+
+		ImGui::SliderFloat("Playback Speed", &boiEntity.Get<CAnimator>().GetClip()->m_speed, 0.0f, 4.0f);
+
+		ImGui::End();
 
 		App::EndImgui();
 

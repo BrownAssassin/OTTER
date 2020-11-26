@@ -31,6 +31,8 @@ namespace nou
 	SkeletalAnimClip::SkeletalAnimClip(const SkeletalAnim& anim, const Skeleton& skeleton)
 		: m_anim(anim)
 	{
+		m_speed = 1.0f;
+
 		m_timer = 0.0f;
 
 		//Should have output for each joint in our skeleton.
@@ -52,26 +54,31 @@ namespace nou
 
 	void SkeletalAnimClip::Update(float deltaTime, const Skeleton& skeleton)
 	{
-		//Update our timer - if we have a time to work off of.
-		if (m_anim.duration != 0.0f)
-		{
-			m_timer += deltaTime;
-
-			//Should we loop over to the beginning?
-			if (m_timer > m_anim.duration)
+		if (isPlaying) {
+			//Update our timer - if we have a time to work off of.
+			if (m_anim.duration != 0.0f)
 			{
-				std::fill(m_rotFrame.begin(), m_rotFrame.end(), 0);
-				std::fill(m_posFrame.begin(), m_posFrame.end(), 0);
+				m_timer += deltaTime * m_speed;
+
+				//Should we loop over to the beginning?
+				if (m_timer > m_anim.duration)
+				{
+					std::fill(m_rotFrame.begin(), m_rotFrame.end(), 0);
+					std::fill(m_posFrame.begin(), m_posFrame.end(), 0);
+
+					if (!isLooping)
+						isPlaying = false;
+				}
+
+				while (m_timer > m_anim.duration)
+					m_timer -= m_anim.duration;
 			}
 
-			while (m_timer > m_anim.duration)
-				m_timer -= m_anim.duration;
+			//Interpolate joint rotations.
+			UpdateRotations();
+			//Interpolate joint positions.
+			UpdatePositions();
 		}
-
-		//Interpolate joint rotations.
-		UpdateRotations();
-		//Interpolate joint positions.
-		UpdatePositions();
 	}
 
 	void SkeletalAnimClip::Apply(Skeleton& skeleton)
@@ -83,6 +90,45 @@ namespace nou
 			joint.m_pos = m_result[i].pos;
 			joint.m_rotation = m_result[i].rotation;
 		}
+	}
+
+	bool SkeletalAnimClip::getPlaying()
+	{
+		return isPlaying;
+	}
+
+	bool SkeletalAnimClip::getLooping()
+	{
+		return isLooping;
+	}
+
+	void SkeletalAnimClip::togglePlaying()
+	{
+		if (isPlaying)
+			isPlaying = false;
+		else
+			isPlaying = true;
+	}
+
+	void SkeletalAnimClip::toggleLooping()
+	{
+		if (isLooping)
+			isLooping = false;
+		else
+			isLooping = true;
+	}
+
+	void SkeletalAnimClip::resetAnim()
+	{
+		std::fill(m_rotFrame.begin(), m_rotFrame.end(), 0);
+		std::fill(m_posFrame.begin(), m_posFrame.end(), 0);
+		
+		m_timer = 0;
+
+		//Interpolate joint rotations.
+		UpdateRotations();
+		//Interpolate joint positions.
+		UpdatePositions();
 	}
 
 	void SkeletalAnimClip::UpdatePositions()

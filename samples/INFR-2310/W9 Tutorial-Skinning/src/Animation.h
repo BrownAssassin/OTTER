@@ -47,6 +47,9 @@ namespace nou
 	{
 		public:
 
+		//Playback speed
+		float m_speed;
+
 		struct JointPose
 		{
 			glm::vec3 pos;
@@ -64,6 +67,13 @@ namespace nou
 		//Apply the output of this node to a skeleton.
 		void Apply(Skeleton& skeleton);
 
+		bool getPlaying();
+		bool getLooping();
+
+		void togglePlaying();
+		void toggleLooping();
+		void resetAnim();
+
 		protected:
 
 		//Our local timer.
@@ -76,6 +86,9 @@ namespace nou
 
 		//The result of our animation update.
 		std::vector<JointPose> m_result;
+
+		bool isPlaying;
+		bool isLooping;
 
 		void UpdateRotations();
 		void UpdatePositions();
