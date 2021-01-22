@@ -57,6 +57,5 @@ namespace nou
 		std::unique_ptr<AnimData> m_data;
 
 		float m_timer;
-		bool m_forwards;
 	};
 }

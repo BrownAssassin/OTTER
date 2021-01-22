@@ -293,7 +293,21 @@ namespace nou
 		{
 			case BlendMode::BLEND:
 
-			//TODO: Implement this blend mode.
+			//Linear blending
+			for (size_t i = 0; i < m_output.size(); ++i)
+			{
+				m_output[i].pos = m_lhs[i].pos;
+
+				m_output[i].rotation = m_lhs[i].rotation;
+
+				m_output[i].pos = glm::mix(rhs_output[i].pos,
+					m_output[i].pos,
+					m_blendParam);
+
+				m_output[i].rotation = glm::mix(rhs_output[i].rotation,
+					m_output[i].rotation,
+					m_blendParam);
+			}
 
 			break;
 

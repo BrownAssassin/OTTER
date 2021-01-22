@@ -30,9 +30,7 @@ namespace nou
 			UV = 4
 		};
 
-		CMorphMeshRenderer(Entity& owner,
-			const Mesh& baseMesh,
-			Material& mat);
+		CMorphMeshRenderer(Entity& owner, const Mesh& baseMesh, Material& mat);
 		virtual ~CMorphMeshRenderer() = default;
 
 		CMorphMeshRenderer(CMorphMeshRenderer&&) = default;

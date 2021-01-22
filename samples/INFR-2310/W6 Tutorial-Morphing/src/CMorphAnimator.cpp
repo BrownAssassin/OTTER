@@ -28,7 +28,6 @@ namespace nou
 		m_owner = &owner;
 		m_data = std::make_unique<AnimData>();
 		m_timer = 0.0f;
-		m_forwards = true;
 	}
 
 	void CMorphAnimator::Update(float deltaTime)
@@ -38,7 +37,6 @@ namespace nou
 			return;
 
 		float t;
-		int i;
 
 		if (m_data->frameTime > 0.0f)
 		{

@@ -61,9 +61,11 @@ int main()
 
 	//Load all our animations.
 	auto idleAnim = std::make_unique<SkeletalAnim>();
+	auto walkAnim = std::make_unique<SkeletalAnim>();
 	auto headAnim = std::make_unique<SkeletalAnim>();
 	
 	GLTF::LoadAnimation("models/boi/Idle.gltf", *(idleAnim.get()));
+	GLTF::LoadAnimation("models/boi/Walk.gltf", *(walkAnim.get()));
 	GLTF::LoadAnimation("models/boi/HeadShake.gltf", *(headAnim.get()));
 
 	//We only want the movement of the head joint for our diff clip.
@@ -91,6 +93,7 @@ int main()
 	auto& skinnedAnimator = boiEntity.Add<CAnimator>(boiEntity);
 	skinnedAnimator.GetBlendtree()->Insert(*idleAnim);
 	//Set up blend tree elements.
+	SkeletalAnimNode* blendNode = skinnedAnimator.GetBlendtree()->Insert(*walkAnim, SkeletalAnimNode::BlendMode::BLEND, 0.0f);
 	SkeletalAnimNode* addNode = skinnedAnimator.GetBlendtree()->Insert(*headAnim, SkeletalAnimNode::BlendMode::ADD, 0.0f);
 	
 	//Make an entity for drawing our debug skeleton (just a box at each joint).
@@ -151,9 +154,12 @@ int main()
 		App::StartImgui();
 
 		static bool panel = true;
+		static float blendParam = 0.0f;
 		static float addParam = 0.0f;
 		ImGui::Begin("Controls", &panel, ImVec2(300, 200));
+		ImGui::SliderFloat("Walk", &blendParam, 0.0f, 1.0f);
 		ImGui::SliderFloat("Head Shake", &addParam, 0.0f, 1.0f);
+		blendNode->SetBlendParam(blendParam);
 		addNode->SetBlendParam(addParam);
 
 		ImGui::End();

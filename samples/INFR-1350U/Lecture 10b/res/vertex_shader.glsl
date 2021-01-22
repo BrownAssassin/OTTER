@@ -20,9 +20,9 @@ void main() {
 
 	// LECTURE 10b
 	vec3 vert = vertex_pos;
-	//vert.y = texture(myTextureSampler, vertex_uv).r;
+	vert.y = texture(myTextureSampler, vertex_uv).r;
 
-	vert.y = sin(vert.x * 5.0 + time * 0.1) * 0.2;
+	//vert.y = sin(vert.x * 5.0 + time * 0.1) * 0.2;
 
 	gl_Position = MVP * vec4(vert, 1.0);
 

@@ -70,8 +70,7 @@ namespace nou
 
 			//If our VBO does not already exist, make a new one.
 			if (it == m_vbo.end())
-				m_vbo.insert({attrib,
-					std::make_unique<VertexBuffer>(elementLen, data)});
+				m_vbo.insert({attrib, std::make_unique<VertexBuffer>(elementLen, data)});
 			//If our VBO does exist, update it with the new data specified.
 			else
 				it->second->UpdateData(data);

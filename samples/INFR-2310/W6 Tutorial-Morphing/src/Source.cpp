@@ -92,7 +92,7 @@ void LoadDefaultResources()
 	prog_morph = std::make_unique<ShaderProgram>(morph);
 
 	//Load in the base model.
-	boiBase = std::make_unique<Mesh>();
+	std::unique_ptr<Mesh> boiBase = std::make_unique<Mesh>();
 	GLTF::LoadMesh("models/boi-t-pose.gltf", *boiBase);
 
 	//Load in our other frames.
@@ -100,7 +100,7 @@ void LoadDefaultResources()
 	std::string filename;
 
 	//Start by just loading in our two base frames.
-	for (int i = 0; i <= 7; ++i)
+	for (int i = 0; i <= 7; ++i)	
 	{
 		filename = boiPrefix + std::to_string(i) + ".gltf";
 
